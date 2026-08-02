@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Academic Planner Web
 
-## Getting Started
+Responsive Thai-first Academic Planner built with Next.js App Router, TypeScript, Tailwind CSS, React Query, React Hook Form, Zod, Dexie, Recharts, Vitest, and Playwright.
 
-First, run the development server:
+## Security architecture
+
+The browser calls only same-origin `/api/bff` routes. The backend refresh token is stored in the `ap_refresh` cookie with `HttpOnly`, `SameSite=Lax`, a restricted auth path, and `Secure` in production. Access tokens live only in memory. Auth mutations enforce same-origin requests, and the domain proxy accepts only declared API domains and safe path segments.
+
+Guest data is kept in IndexedDB and exported as `schema_version: 1`, compatible with the backend guest-import flow. Passwords, access tokens, refresh tokens, VAPID private keys, and database credentials are never included in exports or committed to Git.
+
+## Local development
 
 ```bash
+npm ci
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Set `BACKEND_API_URL` to the Render API root, including `/api/v1`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quality checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+npx playwright install chromium
+npm run test:e2e
+```
 
-## Learn More
+The GitHub Actions workflow runs all checks and uploads the Playwright report on failure.
 
-To learn more about Next.js, take a look at the following resources:
+## Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Import the private `Yoshi4489/academic_planner_web` repository into Vercel.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Production branch: `main`
+- Preview branches: pull requests and `develop`
+- Required environment: `BACKEND_API_URL=https://<render-service>/api/v1`
+- Do not place the VAPID private key in Vercel. The public key is read through the authenticated backend endpoint.
 
-## Deploy on Vercel
+## Web Push rollout
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Deploy in this order:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Run the backend Prisma migration.
+2. Deploy backend subscription APIs with the scheduled worker disabled.
+3. Configure Render secrets: `WEB_PUSH_VAPID_PUBLIC_KEY`, `WEB_PUSH_VAPID_PRIVATE_KEY`, and `WEB_PUSH_SUBJECT`.
+4. Deploy a Vercel preview and validate permission denied, permission granted, subscription rotation, and notification deep links.
+5. Create a Render scheduled job that runs `npm run notifications:dispatch` every minute or the shortest supported interval.
+6. Enable the worker only after preview validation, then promote `develop` to `main` through a reviewed PR.
+
+## Git flow
+
+Changes move through `feature/* → develop → main`. Do not force-push or commit secrets. Protect `main` with required Web CI checks and pull-request reviews.
