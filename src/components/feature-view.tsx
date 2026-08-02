@@ -11,11 +11,13 @@ import {listFrom,type AcademicTask,type Semester} from "@/lib/types";
 import type {Section} from "./app-shell";
 import {AcademicsView} from "./academics-view";
 import {GoalsView} from "./goals-view";
+import {PlannerView} from "./planner-view";
 
 export function FeatureView({section,authenticated,authReady}:{section:Section;authenticated:boolean;authReady:boolean}){
   if(section==="dashboard")return <Dashboard authenticated={authenticated} authReady={authReady}/>;
   if(section==="academics")return <AcademicsView authenticated={authenticated} authReady={authReady}/>;
   if(section==="goals")return <GoalsView authenticated={authenticated} authReady={authReady}/>;
+  if(section==="planner")return <PlannerView authenticated={authenticated} authReady={authReady}/>;
   return <section className="card min-h-[34rem] p-8 sm:p-12 flex items-center"><div className="max-w-xl"><p className="eyebrow">{section.toUpperCase()}</p><h2 className="text-4xl sm:text-5xl font-black mt-4">{section[0].toUpperCase()+section.slice(1)}</h2><p className="mt-4 text-[var(--muted)] text-lg">This workspace section is being connected to your academic data.</p></div></section>;
 }
 

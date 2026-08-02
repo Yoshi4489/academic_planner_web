@@ -7,9 +7,11 @@ export type Course={id:string;name:string;category:CourseCategory;grade:Grade;gr
 export type Gpa={gpa:number;cum_gpa:number;total_credits:number;projected_gpa:number;projected_total_credits:number};
 export type Semester={id:string;year:number;term:string;term_no:number;is_complete:boolean;courses:Course[];gpas:Gpa[]};
 export type Goal={id:string;name:string;target_gpa:number;is_achieved:boolean;target_semester_id:string};
-export type AcademicTask={id:string;title:string;type:string;due_at:string;is_complete:boolean;reminder_offset_minutes:number|null;course_id:string;course?:{id:string;name:string;course_code?:string|null}};
-export type Meeting={id:string;weekday:number;start_minute:number;end_minute:number;location?:string|null;course:{id:string;name:string}};
-export type Requirement={id:string;name:string;required_credits:number;actual_credits:number;projected_credits:number;color?:string|null};
+export const taskTypes=["ASSIGNMENT","EXAM","QUIZ","PROJECT","OTHER"] as const;
+export type TaskType=(typeof taskTypes)[number];
+export type AcademicTask={id:string;title:string;type:TaskType;due_at:string;notes?:string|null;is_complete:boolean;reminder_offset_minutes:number|null;course_id:string;course?:{id:string;name:string;course_code?:string|null}};
+export type Meeting={id:string;weekday:number;start_minute:number;end_minute:number;location?:string|null;course_id:string;course:{id:string;name:string;course_code?:string|null}};
+export type Requirement={id:string;name:string;required_credits:number;actual_credits:number;projected_credits:number;color?:string|null;sort_order?:number};
 export type PlannerBundle={tasks:AcademicTask[];meetings:Meeting[];requirements:Requirement[]};
 export type GuestSnapshot={schema_version:1;semesters:Semester[];goals:Goal[]};
 

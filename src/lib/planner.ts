@@ -1,0 +1,5 @@
+export function minutes(value:string){const [hours,mins]=value.split(":").map(Number);return hours*60+mins;}
+export function formatMinute(value:number){return `${String(Math.floor(value/60)).padStart(2,"0")}:${String(value%60).padStart(2,"0")}`;}
+export function toLocalInput(value:string,offsetMinutes=new Date(value).getTimezoneOffset()){const date=new Date(value);const local=new Date(date.getTime()-offsetMinutes*60000);return local.toISOString().slice(0,16);}
+export function meetingsOverlap(first:{weekday:number;start_minute:number;end_minute:number},second:{weekday:number;start_minute:number;end_minute:number}){return first.weekday===second.weekday&&first.start_minute<second.end_minute&&first.end_minute>second.start_minute;}
+export function reminderLabel(value:number,th:boolean){if(value===0)return th?"เมื่อถึงเวลา":"At due time";if(value<1440)return th?`${value/60} ชั่วโมงล่วงหน้า`:`${value/60}h before`;if(value<10080)return th?`${value/1440} วันล่วงหน้า`:`${value/1440}d before`;return th?`${value/10080} สัปดาห์ล่วงหน้า`:`${value/10080}w before`;}
