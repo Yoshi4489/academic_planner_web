@@ -1,9 +1,10 @@
 import {NextRequest,NextResponse} from "next/server";
 import {callBackend,REFRESH_COOKIE,refreshFrom,responsePayload,safePayload,sameOrigin} from "@/lib/server/backend";
+import {refreshCookieOptions} from "@/lib/server/security";
 
 const publicActions:Record<string,string>={login:"/auth/login",register:"/auth/register","request-password-reset":"/auth/request-password-reset","verify-otp":"/auth/verify-otp","reset-password":"/auth/reset-password"};
 const accountActions:Record<string,{path:string;methods:string[]}>= {profile:{path:"/auth/me",methods:["GET","PATCH"]},"change-password":{path:"/auth/change-password",methods:["POST"]},"delete-account":{path:"/auth/me",methods:["DELETE"]}};
-const cookieOptions={httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax" as const,path:"/api/bff/auth",maxAge:60*60*24*30,priority:"high" as const};
+const cookieOptions=refreshCookieOptions(process.env.NODE_ENV);
 
 async function handler(request:NextRequest,context:{params:Promise<{action:string}>}){
   if(!["GET","HEAD"].includes(request.method)&&!sameOrigin(request))return NextResponse.json({message:"Invalid request origin"},{status:403});

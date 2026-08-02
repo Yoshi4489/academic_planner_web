@@ -1,4 +1,5 @@
 import "server-only";
+export {safePayload,sameOrigin} from "./security";
 
 export const BACKEND_API_URL=(process.env.BACKEND_API_URL??"https://academic-planner-backend-vfbf.onrender.com/api/v1").replace(/\/$/,"");
 export const REFRESH_COOKIE="ap_refresh";
@@ -14,19 +15,6 @@ export async function responsePayload(response:Response){
   try{return JSON.parse(text) as unknown;}catch{return {message:"Upstream service returned an invalid response"};}
 }
 
-export function safePayload(payload:unknown){
-  if(!payload||typeof payload!=="object")return payload;
-  const copy={...(payload as Record<string,unknown>)};
-  delete copy.refresh_token;
-  return copy;
-}
-
 export function refreshFrom(payload:unknown){
   return payload&&typeof payload==="object"&&typeof (payload as Record<string,unknown>).refresh_token==="string"?(payload as Record<string,string>).refresh_token:null;
-}
-
-export function sameOrigin(request:Request){
-  const origin=request.headers.get("origin");
-  if(!origin)return process.env.NODE_ENV!=="production";
-  return origin===new URL(request.url).origin;
 }
