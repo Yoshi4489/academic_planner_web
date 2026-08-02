@@ -12,7 +12,8 @@ async function proxy(request:NextRequest,context:{params:Promise<{domain:string;
   if(!authorization?.startsWith("Bearer "))return NextResponse.json({message:"Authentication required"},{status:401});
   const query=new URL(request.url).search;
   const body=["GET","HEAD"].includes(request.method)?undefined:await request.text();
-  const upstream=await callBackend(`/${domain}/${path.join("/")}${query}`,{method:request.method,body:body||undefined,headers:{authorization}});
+  const idempotencyKey=request.headers.get("idempotency-key");
+  const upstream=await callBackend(`/${domain}/${path.join("/")}${query}`,{method:request.method,body:body||undefined,headers:{authorization,...(domain==="data"&&idempotencyKey?{"idempotency-key":idempotencyKey}:{})}});
   const payload=await responsePayload(upstream);
   return NextResponse.json(payload,{status:upstream.status||500,headers:{"cache-control":"no-store"}});
 }
