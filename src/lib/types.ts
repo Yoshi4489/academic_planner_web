@@ -1,5 +1,9 @@
 export type User={id:string;name:string;email:string};
-export type Course={id:string;name:string;category:string;grade:string;grade_point:number;credit:number;type:"ACTUAL"|"PLAN";semester_id:string;course_code?:string|null;instructor?:string|null;notes?:string|null;requirement_id?:string|null};
+export const grades=["A","B_PLUS","B","C_PLUS","C","D_PLUS","D","F"] as const;
+export const courseCategories=["GEN_ED","MAJOR_REQUIRED","MAJOR_ELECTIVE","MINOR","FREE_ELECTIVE"] as const;
+export type Grade=(typeof grades)[number];
+export type CourseCategory=(typeof courseCategories)[number];
+export type Course={id:string;name:string;category:CourseCategory;grade:Grade;grade_point:number;credit:number;type:"ACTUAL"|"PLAN";semester_id:string;course_code?:string|null;instructor?:string|null;notes?:string|null;requirement_id?:string|null};
 export type Gpa={gpa:number;cum_gpa:number;total_credits:number;projected_gpa:number;projected_total_credits:number};
 export type Semester={id:string;year:number;term:string;term_no:number;is_complete:boolean;courses:Course[];gpas:Gpa[]};
 export type Goal={id:string;name:string;target_gpa:number;is_achieved:boolean;target_semester_id:string};
