@@ -18,6 +18,17 @@ npm run dev
 
 Set `BACKEND_API_URL` to the Render API root, including `/api/v1`.
 
+The browser does not call Render directly. It calls the same-origin Next.js BFF under
+`/api/bff`, which forwards approved requests to the URL in `BACKEND_API_URL`. The checked-in
+`.env.example`, CI workflow, and `vercel.json` all target:
+
+```text
+https://academic-planner-backend-vfbf.onrender.com/api/v1
+```
+
+Override `BACKEND_API_URL` in `.env.local` only when developing against another backend. Never
+rename it to a `NEXT_PUBLIC_` variable.
+
 ## Quality checks
 
 ```bash
@@ -37,7 +48,9 @@ Import the private `Yoshi4489/academic_planner_web` repository into Vercel.
 
 - Production branch: `main`
 - Preview branches: pull requests and `develop`
-- Required environment: `BACKEND_API_URL=https://<render-service>/api/v1`
+- Render backend: `https://academic-planner-backend-vfbf.onrender.com/api/v1`
+- `vercel.json` supplies `BACKEND_API_URL`; set a Vercel environment override only when targeting
+  a different backend service.
 - Do not place the VAPID private key in Vercel. The public key is read through the authenticated backend endpoint.
 
 ## Web Push rollout
