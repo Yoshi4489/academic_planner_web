@@ -112,8 +112,22 @@ button:disabled { cursor:not-allowed; }
 .segmented-control { display:flex; gap:2px; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--surface); padding:3px; }
 .segmented-control button { min-height:36px; min-width:max-content; flex:1; border-radius:var(--radius-sm); padding:6px 14px; color:var(--text-secondary); font-size:13px; font-weight:650; }
 .segmented-control button[aria-selected="true"] { background:var(--primary); color:#fff; }
+.auth-showcase { position:relative; overflow:hidden; background:var(--nav-bg); color:#fff; }
+.auth-showcase::before { content:""; position:absolute; inset:0; opacity:.12; background-image:linear-gradient(rgba(255,255,255,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.18) 1px,transparent 1px); background-size:40px 40px; mask-image:linear-gradient(to bottom,black,transparent 78%); }
+.auth-feature { display:flex; align-items:flex-start; gap:12px; border-top:1px solid rgba(255,255,255,.14); padding-block:14px; color:rgba(255,255,255,.74); font-size:13px; }
+.legal-copy>div { margin-top:0; }
+.legal-copy section { border-bottom:1px solid var(--border); padding-bottom:24px; }
+.legal-copy section:last-child { border-bottom:0; padding-bottom:0; }
+[class~="bg-[#eaf8c8]"],[class~="bg-[#dceae5]"],[class~="bg-[#f2f5ef]"] { background:var(--info-surface); color:var(--primary); }
+[class~="bg-green-50"] { background:var(--success-surface); }
+[class~="text-green-900"] { color:var(--success); }
+[class~="bg-red-50"] { background:var(--error-surface); }
+[class~="text-red-700"],[class~="text-red-800"],[class~="text-red-900"] { color:var(--error); }
+[class~="border-red-100"],[class~="border-red-200"] { border-color:color-mix(in srgb,var(--error) 35%,var(--border)); }
 
 .card { border:1px solid var(--border); background:var(--surface); box-shadow:var(--shadow-subtle); border-radius:var(--radius-md); color:var(--text-primary); }
+.card h2.text-4xl { font-size:30px; font-weight:700; line-height:40px; }
+.card h3.text-xl { font-size:18px; font-weight:650; line-height:26px; }
 .card-elevated { border:0; box-shadow:var(--shadow-medium); }
 .eyebrow { color:var(--text-secondary); font-size:11px; font-weight:650; line-height:16px; letter-spacing:.12em; text-transform:uppercase; }
 .button-primary,.button-secondary,.button-danger,.button-ghost { display:inline-flex; min-height:36px; align-items:center; justify-content:center; gap:8px; border-radius:var(--radius-md); padding:6px 14px; border:1px solid transparent; font-size:13px; font-weight:650; line-height:20px; transition:background-color 160ms,border-color 160ms,color 160ms,box-shadow 160ms; }

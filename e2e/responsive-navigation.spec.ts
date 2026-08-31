@@ -7,3 +7,7 @@ test("theme choice persists across navigation and reload",async({page})=>{await 
 test("planner sections expose keyboard-friendly tabs",async({page})=>{await page.goto("/en/planner");const tasks=page.getByRole("tab",{name:"Tasks & deadlines"});const requirements=page.getByRole("tab",{name:"Degree progress"});await expect(tasks).toHaveAttribute("aria-selected","true");await requirements.click();await expect(requirements).toHaveAttribute("aria-selected","true");await expect(tasks).toHaveAttribute("aria-selected","false");});
 
 test("Thai workspace loads its localized dashboard",async({page})=>{await page.goto("/th");await expect(page.locator("html")).toHaveAttribute("lang","th");await expect(page.getByRole("heading",{name:"วางแผนวันนี้ เพื่อเทอมที่เบากว่า"})).toBeVisible();});
+
+test("account preferences update the shared theme",async({page})=>{await page.goto("/en/account");await page.getByRole("combobox",{name:"Theme",exact:true}).selectOption("dark");await expect(page.locator("html")).toHaveAttribute("data-theme","dark");await expect.poll(()=>page.evaluate(()=>localStorage.getItem("theme"))).toBe("dark");});
+
+test("legal pages retain account navigation",async({page})=>{await page.goto("/en/privacy");await expect(page.getByRole("heading",{name:"Privacy policy"})).toBeVisible();await page.getByRole("link",{name:"Back to account"}).click();await expect(page).toHaveURL(/\/en\/account$/);});
