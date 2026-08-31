@@ -5,6 +5,7 @@ import {createContext,useContext,useEffect,useMemo,useState} from "react";
 import {authAction,refreshSession,setAccessToken,setAuthListener} from "@/lib/api-client";
 import type {User} from "@/lib/types";
 import {syncPreviouslyGrantedPush} from "@/lib/web-push";
+import {ThemeProvider} from "./theme-provider";
 
 type AuthValue={user:User|null;ready:boolean;login:(email:string,password:string)=>Promise<void>;register:(name:string,email:string,password:string)=>Promise<void>;logout:()=>Promise<void>;logoutAll:()=>Promise<void>;updateUser:(user:User)=>void;clearSession:()=>void};
 const AuthContext=createContext<AuthValue|null>(null);
@@ -16,5 +17,5 @@ export function Providers({children,locale,messages}:{children:React.ReactNode;l
   useEffect(()=>{setAuthListener((session)=>{setUser(session?.user??null);setReady(true);if(!session)queryClient.clear();});refreshSession().catch(()=>setReady(true));return()=>setAuthListener(null);},[queryClient]);
   useEffect(()=>{if(user)void syncPreviouslyGrantedPush().catch(()=>undefined);},[user]);
   const value=useMemo<AuthValue>(()=>{const clearSession=()=>{setAccessToken(null);setUser(null);queryClient.clear();};return {user,ready,login:async(email,password)=>{const session=await authAction("login",{email,password});setAccessToken(session.access_token);setUser(session.user);},register:async(name,email,password)=>{const session=await authAction("register",{name,email,password});setAccessToken(session.access_token);setUser(session.user);},logout:async()=>{try{await authAction("logout");}finally{clearSession();}},logoutAll:async()=>{try{await authAction("logout-all");}finally{clearSession();}},updateUser:setUser,clearSession};},[user,ready,queryClient]);
-  return <NextIntlClientProvider locale={locale} messages={messages} timeZone="Asia/Bangkok"><QueryClientProvider client={queryClient}><AuthContext.Provider value={value}>{children}</AuthContext.Provider></QueryClientProvider></NextIntlClientProvider>;
+  return <NextIntlClientProvider locale={locale} messages={messages} timeZone="Asia/Bangkok"><ThemeProvider><QueryClientProvider client={queryClient}><AuthContext.Provider value={value}>{children}</AuthContext.Provider></QueryClientProvider></ThemeProvider></NextIntlClientProvider>;
 }
